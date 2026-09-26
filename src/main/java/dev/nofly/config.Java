@@ -20,14 +20,18 @@ public final class Config {
     public double horizontal_min_horizontal;
 
     public boolean glide_on;
+    public double glide_speed_tolerance;
+    public double glide_buffer;
+    public double glide_decay;
 
     public boolean timer_on;
     public long timer_min_ms;
     public int timer_buffer;
 
+    public long effects_max_tracked_ms;
+
     public boolean punish_alert;
-    public boolean punish_setback;
-    public int punish_kick_after;
+    public String punish_log_file;
 
     public Config(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -52,13 +56,17 @@ public final class Config {
         horizontal_min_horizontal = file.getDouble("horizontal.min_horizontal", 0.1);
 
         glide_on = file.getBoolean("glide.enabled", true);
+        glide_speed_tolerance = file.getDouble("glide.speed_tolerance", 0.12);
+        glide_buffer = file.getDouble("glide.buffer", 2.5);
+        glide_decay = file.getDouble("glide.decay", 0.5);
 
         timer_on = file.getBoolean("timer.enabled", true);
         timer_min_ms = file.getLong("timer.min_ms", 40);
         timer_buffer = file.getInt("timer.buffer", 20);
 
+        effects_max_tracked_ms = file.getLong("effects.max_tracked_ms", 600000L);
+
         punish_alert = file.getBoolean("punish.alert", true);
-        punish_setback = file.getBoolean("punish.setback", true);
-        punish_kick_after = file.getInt("punish.kick_after", 0);
+        punish_log_file = file.getString("punish.log_file", "flags.log");
     }
 }

@@ -41,16 +41,21 @@ horizontal:
 
 glide:
   enabled: true
+  speed_tolerance: 0.12
+  buffer: 2.5
+  decay: 0.5
 
 timer:
   enabled: true
   min_ms: 40
   buffer: 20
 
+effects:
+  max_tracked_ms: 600000
+
 punish:
   alert: true
-  setback: true
-  kick_after: 0
+  log_file: flags.log
 ```
 
 ## Build

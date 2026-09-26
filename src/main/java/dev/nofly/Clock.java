@@ -56,7 +56,7 @@ public final class Clock {
             track.timer_flags--;
         }
         if (track.timer_flags > NoFly.get().config().timer_buffer) {
-            NoFly.get().getLogger().warning("timer " + id);
+            NoFly.get().log().write_raw(id, "timer", track.timer_flags);
             track.timer_flags = 0;
         }
     }

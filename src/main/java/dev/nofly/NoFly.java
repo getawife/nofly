@@ -11,7 +11,7 @@ public final class NoFly extends JavaPlugin {
     private Config config;
     private State state;
     private Clock clock;
-    private Packets packets;
+    private Log log;
 
     @Override
     public void onLoad() {
@@ -25,11 +25,12 @@ public final class NoFly extends JavaPlugin {
         config = new Config(this);
         state = new State();
         clock = new Clock(this);
-        packets = new Packets(this);
+        log = new Log(getDataFolder().toPath());
 
         PacketEvents.getAPI().init();
-        PacketEvents.getAPI().getEventManager().registerListener(packets);
+        PacketEvents.getAPI().getEventManager().registerListener(new Packets(this));
 
+        getServer().getPluginManager().registerEvents(new Effects(this), this);
         getServer().getPluginManager().registerEvents(new Move(this), this);
         getServer().getPluginManager().registerEvents(new Admin(this), this);
 
@@ -59,5 +60,9 @@ public final class NoFly extends JavaPlugin {
 
     public Clock clock() {
         return clock;
+    }
+
+    public Log log() {
+        return log;
     }
 }

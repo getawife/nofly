@@ -16,3 +16,6 @@ permissions:
   nofly.admin:
     description: Use /nofly
     default: op
+  nofly.alerts:
+    description: Receive fly flag alerts in chat
+    default: op

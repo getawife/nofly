@@ -7,6 +7,8 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
+import java.util.UUID;
+
 public final class Move implements Listener {
 
     private final NoFly plugin;
@@ -33,6 +35,8 @@ public final class Move implements Listener {
 
     @EventHandler
     public void quit(PlayerQuitEvent event) {
-        plugin.state().drop(event.getPlayer().getUniqueId());
+        UUID id = event.getPlayer().getUniqueId();
+        plugin.state().drop(id);
+        plugin.log().forget(id);
     }
 }

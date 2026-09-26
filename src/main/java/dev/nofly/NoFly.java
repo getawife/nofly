@@ -25,7 +25,7 @@ public final class NoFly extends JavaPlugin {
         config = new Config(this);
         state = new State();
         clock = new Clock(this);
-        log = new Log(getDataFolder().toPath());
+        log = new Log(this, getDataFolder().toPath());
 
         PacketEvents.getAPI().init();
         PacketEvents.getAPI().getEventManager().registerListener(new Packets(this));
@@ -42,10 +42,10 @@ public final class NoFly extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        clock.stop();
-        PacketEvents.getAPI().terminate();
+    clock.stop();
+    log.shutdown();
+    PacketEvents.getAPI().terminate();
     }
-
     public static NoFly get() {
         return instance;
     }

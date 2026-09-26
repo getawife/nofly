@@ -4,12 +4,12 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public final class State {
+public final class state {
 
-    private final Map<UUID, Track> tracks = new ConcurrentHashMap<>();
+    private final Map<UUID, track> tracks = new ConcurrentHashMap<>();
 
-    public Track get(UUID id) {
-        return tracks.computeIfAbsent(id, key -> new Track());
+    public track get(UUID id) {
+        return tracks.computeIfAbsent(id, key -> new track());
     }
 
     public void drop(UUID id) {

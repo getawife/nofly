@@ -1,10 +1,10 @@
 name: NoFly
 version: "${version}"
-main: dev.nofly.NoFly
+main: dev.nofly.no_fly
 api-version: "1.21"
 depend: [packetevents]
 author: nofly
-description: A simply anti cheat to stop fly hackers in Minecraft!
+description: A fly detection plugin for Paper 1.21.x.
 commands:
   nofly:
     description: Manage the fly check

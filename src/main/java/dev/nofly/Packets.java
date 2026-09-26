@@ -2,56 +2,36 @@ package dev.nofly;
 
 import com.github.retrooper.packetevents.event.PacketListener;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
-import com.github.retrooper.packetevents.protocol.packettype.PacketType;
-import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerCommand;
-import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientWindowConfirmation;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
+import com.github.retrooper.packetevents.util.Vector3d;
+import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerFlying;
 
-import java.util.UUID;
-
-public final class Packets implements PacketListener {
-
-    private final NoFly plugin;
-
-    public Packets(NoFly plugin) {
-        this.plugin = plugin;
-    }
+public final class packets implements PacketListener {
 
     @Override
     public void onPacketReceive(PacketReceiveEvent event) {
-        if (event.getPacketType() == PacketType.Play.Client.PLAYER_COMMAND) {
-            glide(event);
-        } else if (event.getPacketType() == PacketType.Play.Client.WINDOW_CONFIRMATION) {
-            confirm(event);
+        if (!WrapperPlayClientPlayerFlying.isFlying(event.getPacketType())) {
+            return;
         }
-    }
 
-    private void glide(PacketReceiveEvent event) {
-        if (!plugin.config().glide_on) {
+        WrapperPlayClientPlayerFlying packet = new WrapperPlayClientPlayerFlying(event);
+        if (!packet.hasPositionChanged()) {
             return;
         }
-        WrapperPlayClientPlayerCommand packet = new WrapperPlayClientPlayerCommand(event);
-        if (packet.getAction() != 8) {
-            return;
-        }
-        Player player = event.getPlayer();
-        if (player == null) {
-            return;
-        }
-        boolean grounded = player.isOnGround();
-        boolean no_elytra = player.getInventory().getChestplate() == null
-                || player.getInventory().getChestplate().getType() != Material.ELYTRA;
-        boolean rising = player.getVelocity().getY() >= 0;
-        if (grounded || no_elytra || rising) {
+
+        Vector3d position = packet.getLocation().getPosition();
+        if (position == null || !finite(position.getX()) || !finite(position.getY()) || !finite(position.getZ())) {
             event.setCancelled(true);
-            plugin.getLogger().info(player.getName() + " flagged glide");
+            return;
+        }
+
+        if (Math.abs(position.getX()) > 3.0e7
+                || Math.abs(position.getZ()) > 3.0e7
+                || Math.abs(position.getY()) > 2.0e7) {
+            event.setCancelled(true);
         }
     }
 
-    private void confirm(PacketReceiveEvent event) {
-        WrapperPlayClientWindowConfirmation packet = new WrapperPlayClientWindowConfirmation(event);
-        UUID id = event.getUser().getUUID();
-        plugin.clock().confirm(id, packet.getActionId());
+    private boolean finite(double value) {
+        return Double.isFinite(value);
     }
 }

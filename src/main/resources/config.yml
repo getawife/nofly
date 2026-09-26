@@ -2,29 +2,39 @@ leniency: 1.15
 
 vertical:
   enabled: true
-  tolerance: 0.08
-  buffer: 2.0
-  decay: 0.5
+  tolerance: 0.09
+  startup_ticks: 2
+  hover_ticks: 5
+  ascent_ticks: 10
+  ascent_min: 0.08
+  stalled_ticks: 8
+  stalled_min: 0.08
+  stalled_max: 0.5
+  stalled_delta: 0.015
+  buffer: 2.5
+  decay: 0.35
 
 horizontal:
   enabled: true
-  min_ticks: 10
-  max_vertical: 0.01
-  min_horizontal: 0.1
+  min_ticks: 8
+  max_vertical: 0.035
+  min_horizontal: 0.10
+  buffer: 2.5
+  decay: 0.25
 
 glide:
   enabled: true
-  speed_tolerance: 0.12
-  buffer: 2.5
-  decay: 0.5
-
-timer:
-  enabled: true
-  min_ms: 40
-  buffer: 20
 
 effects:
-  max_tracked_ms: 600000
+  grace_ms: 1200
+
+damage_grace_ms: 2000
+velocity_grace_ms: 500
+teleport_grace_ms: 1000
+setback_grace_ms: 750
+
+setback:
+  enabled: true
 
 punish:
   alert: true

@@ -1,72 +1,47 @@
 # NoFly
 
-A fly-specific anti-cheat for Paper 1.21.x. Works by simulating movement server side and validating the client side packets.
+A fly detection plugin for Paper 1.21.x. It combines synchronous movement analysis with PacketEvents packet sanity checks.
 
 ## Install
 
 1. Install [PacketEvents](https://github.com/retrooper/packetevents) on your server.
 2. Drop `NoFly-1.0.0.jar` into `plugins/`.
 3. Start the server once to generate `config.yml`.
-4. Tune `leniency` upward if you have high-ping players (default `1.15`).
+4. Tune `leniency` upward for unusually noisy movement environments.
+
+## Checks
+
+The movement monitor runs once per server tick and tracks the player's last accepted position, vertical motion, air time, sustained hovering, and sustained ascent.
+
+The vertical check compares measured vertical displacement with the previous tick's expected gravity step. It also detects prolonged near-zero vertical motion and prolonged upward movement while airborne.
+
+The horizontal check looks for sustained horizontal movement while vertical movement remains close to zero. It is intentionally buffered so a single unusual tick does not cause a setback.
+
+PacketEvents rejects non-finite or unreasonable movement coordinates. Server-side glide events validate Elytra start attempts.
+
+Creative, spectator, active flight, Elytra gliding, riptiding, vehicles, fluids, climbing, levitation, slow falling, powder snow, recent damage, recent velocity changes, potion changes, teleports, and players with `nofly.bypass` are exempt from movement checks.
 
 ## Commands
 
-| command         | permission    | description       |
-| --------------- | ------------- | ----------------- |
-| `/nofly reload` | `nofly.admin` | reload the config |
+| command | permission | description |
+| --- | --- | --- |
+| `/nofly reload` | `nofly.admin` | reload the configuration |
 
 ## Permissions
 
-| permission     | default | description         |
-| -------------- | ------- | ------------------- |
-| `nofly.bypass` | op      | skip all fly checks |
-| `nofly.admin`  | op      | use `/nofly`        |
-
-## Config
-
-```yaml
-leniency: 1.15
-
-vertical:
-  enabled: true
-  tolerance: 0.08
-  buffer: 2.0
-  decay: 0.5
-
-horizontal:
-  enabled: true
-  min_ticks: 10
-  max_vertical: 0.01
-  min_horizontal: 0.1
-
-glide:
-  enabled: true
-  speed_tolerance: 0.12
-  buffer: 2.5
-  decay: 0.5
-
-timer:
-  enabled: true
-  min_ms: 40
-  buffer: 20
-
-effects:
-  max_tracked_ms: 600000
-
-punish:
-  alert: true
-  log_file: flags.log
-```
+| permission | default | description |
+| --- | --- | --- |
+| `nofly.bypass` | op | skip movement checks |
+| `nofly.admin` | op | use `/nofly` |
+| `nofly.alerts` | op | receive flag alerts |
 
 ## Build
 
-```bash
-./gradlew build
+```text
+gradle build
 ```
 
-If the wrapper jar is missing, run `gradle wrapper` once first.
-
-Output: `build/libs/NoFly-1.0.0.jar`.
+The GitHub Actions workflow installs Gradle 8.10.2 automatically.
 
 ## License
 

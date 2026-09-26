@@ -1,27 +1,26 @@
 package dev.nofly;
 
-public final class Buffer {
+public final class buffer {
 
     private double value;
-    private final double threshold;
-    private final double decay;
 
-    public Buffer(double threshold, double decay) {
-        this.threshold = threshold;
-        this.decay = decay;
-    }
-
-    public boolean add(double amount) {
-        value += amount;
+    public boolean add(double amount, double threshold) {
+        if (!Double.isFinite(amount) || !Double.isFinite(threshold)) {
+            return false;
+        }
+        value += Math.max(0.0, amount);
         return value >= threshold;
     }
 
-    public void clean() {
-        value = Math.max(0, value - decay);
+    public void decay(double amount) {
+        if (!Double.isFinite(amount)) {
+            return;
+        }
+        value = Math.max(0.0, value - Math.max(0.0, amount));
     }
 
     public void reset() {
-        value = 0;
+        value = 0.0;
     }
 
     public double value() {

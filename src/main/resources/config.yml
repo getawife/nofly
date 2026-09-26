@@ -1,0 +1,26 @@
+leniency: 1.15
+
+vertical:
+  enabled: true
+  tolerance: 0.08
+  buffer: 2.0
+  decay: 0.5
+
+horizontal:
+  enabled: true
+  min_ticks: 10
+  max_vertical: 0.01
+  min_horizontal: 0.1
+
+glide:
+  enabled: true
+
+timer:
+  enabled: true
+  min_ms: 40
+  buffer: 20
+
+punish:
+  alert: true
+  setback: true
+  kick_after: 0

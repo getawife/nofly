@@ -1,0 +1,18 @@
+name: NoFly
+version: "${version}"
+main: dev.nofly.NoFly
+api-version: "1.21"
+depend: [packetevents]
+author: nofly
+description: A simply anti cheat to stop fly hackers in Minecraft!
+commands:
+  nofly:
+    description: Manage the fly check
+    permission: nofly.admin
+permissions:
+  nofly.bypass:
+    description: Skip all fly checks
+    default: op
+  nofly.admin:
+    description: Use /nofly
+    default: op

@@ -15,9 +15,7 @@ public final class effects implements Listener {
 
     @EventHandler
     public void potion(EntityPotionEffectEvent event) {
-        if (!(event.getEntity() instanceof Player player)) {
-            return;
-        }
+        if (!(event.getEntity() instanceof Player player)) return;
         if (event.getAction() != EntityPotionEffectEvent.Action.ADDED
                 && event.getAction() != EntityPotionEffectEvent.Action.CHANGED) {
             return;
@@ -26,5 +24,6 @@ public final class effects implements Listener {
         track.last_effect_apply = System.currentTimeMillis();
         track.vertical_buffer.reset();
         track.horizontal_buffer.reset();
+        track.prediction_buffer.reset();
     }
 }

@@ -9,6 +9,7 @@ commands:
   nofly:
     description: Manage the fly check
     permission: nofly.admin
+    usage: /nofly <reload|info|reset>
 permissions:
   nofly.bypass:
     description: Skip all fly checks
@@ -16,6 +17,8 @@ permissions:
   nofly.admin:
     description: Use /nofly
     default: op
+    children:
+      nofly.alerts: true
   nofly.alerts:
     description: Receive fly flag alerts in chat
     default: op

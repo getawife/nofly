@@ -1,26 +1,38 @@
-leniency: 1.15
+leniency: 1.10
+max_offset_per_tick: 4.0
+ping_scale: 0.004
 
 vertical:
   enabled: true
-  tolerance: 0.09
+  tolerance: 0.02
   startup_ticks: 2
-  hover_ticks: 5
-  ascent_ticks: 10
+  hover_ticks: 6
+  ascent_ticks: 12
   ascent_min: 0.08
-  stalled_ticks: 8
+  stalled_ticks: 10
   stalled_min: 0.08
   stalled_max: 0.5
   stalled_delta: 0.015
-  buffer: 2.5
-  decay: 0.35
+  buffer: 3.0
+  decay: 0.4
 
 horizontal:
   enabled: true
-  min_ticks: 8
-  max_vertical: 0.035
-  min_horizontal: 0.10
-  buffer: 2.5
-  decay: 0.25
+  min_ticks: 10
+  max_vertical: 0.03
+  min_horizontal: 0.12
+  buffer: 3.0
+  decay: 0.3
+
+prediction:
+  enabled: true
+  tolerance: 0.03
+  buffer: 4.0
+  decay: 0.2
+
+ground:
+  enabled: true
+  vl: 4
 
 glide:
   enabled: true
@@ -28,14 +40,17 @@ glide:
 effects:
   grace_ms: 1200
 
-damage_grace_ms: 2000
+damage_grace_ms: 500
 velocity_grace_ms: 500
-teleport_grace_ms: 1000
-setback_grace_ms: 750
+teleport_grace_ms: 800
+setback_grace_ms: 500
+join_grace_ms: 3000
 
 setback:
   enabled: true
 
 punish:
   alert: true
+  kick: false
+  kick_vl: 60
   log_file: flags.log

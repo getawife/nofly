@@ -11,6 +11,7 @@ public final class no_fly extends JavaPlugin {
     private clock clock;
     private log log;
     private move move;
+    private packets packets;
 
     @Override
     public void onLoad() {
@@ -23,11 +24,12 @@ public final class no_fly extends JavaPlugin {
         config = new config(this);
         state = new state();
         move = new move(this);
+        packets = new packets(this, move);
         clock = new clock(this, move);
         log = new log(this, getDataFolder().toPath());
 
         PacketEvents.getAPI().init();
-        PacketEvents.getAPI().getEventManager().registerListener(new packets());
+        PacketEvents.getAPI().getEventManager().registerListener(packets);
 
         getServer().getPluginManager().registerEvents(new effects(this), this);
         getServer().getPluginManager().registerEvents(move, this);
@@ -44,28 +46,14 @@ public final class no_fly extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (clock != null) {
-            clock.stop();
-        }
-        if (log != null) {
-            log.shutdown();
-        }
+        if (clock != null) clock.stop();
+        if (log != null) log.shutdown();
         PacketEvents.getAPI().terminate();
     }
 
-    public config config() {
-        return config;
-    }
-
-    public state state() {
-        return state;
-    }
-
-    public clock clock() {
-        return clock;
-    }
-
-    public log log() {
-        return log;
-    }
+    public config config() { return config; }
+    public state state() { return state; }
+    public clock clock() { return clock; }
+    public log log() { return log; }
+    public move move() { return move; }
 }

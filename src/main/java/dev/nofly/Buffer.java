@@ -5,17 +5,17 @@ public final class buffer {
     private double value;
 
     public boolean add(double amount, double threshold) {
-        if (!Double.isFinite(amount) || !Double.isFinite(threshold)) {
-            return false;
-        }
+        if (!Double.isFinite(amount) || !Double.isFinite(threshold)) return false;
         value += Math.max(0.0, amount);
-        return value >= threshold;
+        if (value >= threshold) {
+            value = 0.0;
+            return true;
+        }
+        return false;
     }
 
     public void decay(double amount) {
-        if (!Double.isFinite(amount)) {
-            return;
-        }
+        if (!Double.isFinite(amount)) return;
         value = Math.max(0.0, value - Math.max(0.0, amount));
     }
 

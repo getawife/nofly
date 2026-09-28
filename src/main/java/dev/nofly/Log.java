@@ -26,6 +26,7 @@ public final class log {
     private final Path data_folder;
     private final Queue<String> queue = new ConcurrentLinkedQueue<>();
     private final Map<UUID, Long> last_alert = new ConcurrentHashMap<>();
+    private final Object file_lock = new Object();
     private volatile Path file;
     private final BukkitTask flusher;
 
@@ -42,22 +43,20 @@ public final class log {
         queue.add(Instant.now() + " " + id + " " + player.getName() + " " + kind + " " + total);
 
         Long previous = last_alert.get(id);
-        if (previous != null && now - previous < 3000L) {
-            return;
-        }
+        if (previous != null && now - previous < 3000L) return;
         last_alert.put(id, now);
 
-        if (!plugin.config().punish_alert) {
-            return;
-        }
+        if (!plugin.config().punish_alert) return;
 
         plugin.getLogger().info(player.getName() + " flagged " + kind + " (" + total + ")");
         Component message = build(player, kind, total);
-        for (Player online : Bukkit.getOnlinePlayers()) {
-            if (online.hasPermission("nofly.alerts")) {
-                online.sendMessage(message);
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            for (Player online : Bukkit.getOnlinePlayers()) {
+                if (online.hasPermission("nofly.alerts")) {
+                    online.sendMessage(message);
+                }
             }
-        }
+        });
     }
 
     public void reload() {
@@ -65,14 +64,16 @@ public final class log {
         Path next;
         try {
             Path configured = Path.of(plugin.config().punish_log_file).getFileName();
-            next = configured == null || configured.toString().isBlank() || configured.toString().equals(".")
-                    || configured.toString().equals("..")
+            next = configured == null || configured.toString().isBlank()
+                    || configured.toString().equals(".") || configured.toString().equals("..")
                     ? data_folder.resolve("flags.log")
                     : data_folder.resolve(configured).normalize();
         } catch (InvalidPathException error) {
             next = data_folder.resolve("flags.log");
         }
-        file = next;
+        synchronized (file_lock) {
+            file = next;
+        }
         ensure_file(next);
     }
 
@@ -100,33 +101,26 @@ public final class log {
         try {
             Files.createDirectories(data_folder);
             Path parent = target.getParent();
-            if (parent != null) {
-                Files.createDirectories(parent);
-            }
-            if (!Files.exists(target)) {
-                Files.createFile(target);
-            }
+            if (parent != null) Files.createDirectories(parent);
+            if (!Files.exists(target)) Files.createFile(target);
         } catch (IOException error) {
             throw new IllegalStateException("unable to create log file", error);
         }
     }
 
     private void flush() {
-        if (queue.isEmpty()) {
-            return;
+        if (queue.isEmpty()) return;
+        Path target;
+        synchronized (file_lock) {
+            target = file;
         }
-        Path target = file;
-        if (target == null) {
-            return;
-        }
+        if (target == null) return;
         StringBuilder batch = new StringBuilder();
         String line;
         while ((line = queue.poll()) != null) {
             batch.append(line).append(System.lineSeparator());
         }
-        if (batch.isEmpty()) {
-            return;
-        }
+        if (batch.isEmpty()) return;
         try {
             Files.writeString(target, batch.toString(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
         } catch (IOException error) {
